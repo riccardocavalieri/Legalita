@@ -1,0 +1,14 @@
+Ciao,
+ci sono 25 domande in tutto,
+di 5 categorie: scuola, social, mafia, giochi e famiglia.
+Qualche domanda, ha anche un link di approfondimento.
+
+-
+
+L'ideale sarebbe:
+- non avere bisogno di un database. Fare db con file xml o txt.
+- che possa andare anche senza rete e senza servizi particolari
+- html + js
+
+
+

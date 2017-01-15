@@ -1,0 +1,426 @@
+@charset "utf-8";
+/* CSS Document */
+
+body, html {
+	margin: 0;
+}
+body {
+	font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+	font-size: 14px;
+	line-height: 1.42857143;
+	color: #333;
+	background-color: #fff;
+}
+hr {
+	margin-top: 20px;
+	margin-bottom: 20px;
+	border: 0;
+	border-top: 1px solid #eee;
+}
+a {
+	color: #337ab7;
+	text-decoration: none;
+}
+p {
+	margin: 0 0 10px;
+}
+h4, .h4 {
+	font-size: 18px;
+}
+h4, .h4, h5, .h5, h6, .h6 {
+	margin-top: 10px;
+	margin-bottom: 10px;
+}
+h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6 {
+	font-family: inherit;
+	font-weight: 500;
+	line-height: 1.1;
+	color: inherit;
+}
+/* MAIN */
+.lg-main {
+	width: 720px;
+	margin: 0 auto;
+}
+.lg-header {
+	background-color: #00ade3;
+	text-align: center;
+	padding: 0px 20px 0px 20px;
+	height: 65px;
+	line-height: 65px;
+	font-size: 3em;
+	font-weight: bold;
+	color: #fff;
+}
+.lg-page {
+	min-height: 620px;
+	margin: 0 auto;
+	background-color: #fff;
+	border: 10px solid #00ade3;
+}
+.lg-footer {
+	text-align: center;
+	padding-top: 20px;
+	padding-bottom: 20px;
+	border: 0;
+	border-top: 0px solid #eee;
+	border-bottom: 0px solid #eee;
+}
+.lg-header a {
+	color: #fff;
+}
+/* SCHERMATE MAIN */
+.lg-home {
+	padding: 20px 10px 0 10px;
+}
+.lg-avatar {
+	padding: 20px 10px 0 10px;
+}
+.lg-tema {
+	padding: 20px 10px 0 10px;
+}
+.lg-tema-intro {
+	padding: 20px 10px 0 10px;
+}
+.lg-gioco {
+	padding: 20px 10px 0 10px;
+	min-height: 600px;
+}
+.lg-fine {
+	padding: 20px 10px 0 10px;
+}
+/* HOME */
+.lg-page-intro {
+	text-align: center;
+	margin-top: 20px;
+	padding-top: 20px;
+	padding-bottom: 20px;
+	border-top: 1px solid #eee;
+}
+.lg-logo-intro {
+	text-align: center;
+}
+/* AVATAR */
+.lg-avatar {
+	text-align: center;
+}
+.lg-message {
+	font-size: 27px;
+	padding: 30px 0;
+	font-weight: bold;
+}
+.lg-avatar-ico {
+	display: inline-block;
+	border: 1px solid #fff;
+	padding: 5px;
+	margin: 5px;
+}
+.lg-avatar-ico:hover {
+	display: inline-block;
+	border: 1px solid #00ade3;
+	cursor: pointer;
+}
+/* TEMA */
+.lg-tema {
+	text-align: center;
+}
+.lg-message {
+	font-size: 27px;
+	padding: 30px 0;
+}
+.lg-tema-testo {
+	font-size: 27px;
+	padding: 30px 0;
+}
+.lg-tema-ico {
+	display: inline-block;
+	border: 1px solid #fff;
+	padding: 5px;
+	margin: 5px;
+}
+.lg-tema-ico img {
+	width: 120px;
+}
+.lg-tema-ico:hover {
+	display: inline-block;
+	border: 1px solid #00ade3;
+	cursor: pointer;
+}
+/* TEMA */
+.lg-tema-intro {
+	text-align: center;
+}
+.lg-message-tema {
+	font-size: 27px;
+	padding: 30px 0 0 0;
+	font-weight: bold;
+}
+.lg-tema-grande img {
+	width: 70%;
+}
+/* GIOCO */
+.lg-gioco {
+	background-image: url(../img/sfondo.jpg);
+}
+.vivo {
+	display: block !important;
+	height: 44px;
+	width: 44px;
+	background-repeat: no-repeat;
+	background-image: url(../img/vita.png);
+	float: left;
+}
+.morto {
+	display: block !important;
+	height: 44px;
+	width: 44px;
+	background-repeat: no-repeat;
+	background-image: url(../img/vita.png);
+	float: left;
+	background-position: 0 -44px !important;
+}
+.lg-barragioco-vite {
+	float: left;
+}
+.lg-barragioco-avatar-message {
+	display: inline-block;
+	background-color: #FFFFFF;
+	font-weight: bold;
+	text-align: right;
+	font-size: 16px;
+	line-height: 50px;
+	padding: 0 20px;
+	vertical-align: top;
+}
+.lg-barragioco-avatar {
+	float: right;
+}
+.lg-barragioco-avatar img {
+	width: 50px;
+	height: 50px;
+}
+.superclear {
+	clear: both;
+}
+.lg-temagioco {
+	font-size: 27px;
+	padding: 5px 0;
+	text-align: center;
+	font-weight: bold;
+}
+.lg-gioco-domanda {
+	text-align: center;
+	font-size: 16px;
+	padding: 5px 5px 0 5px;
+	background-color: #000000;
+	color: #fff;
+	min-height: 50px;
+	font-weight: bold;
+	border: 5px solid #f13452;
+	border-radius: 15px;
+}
+.lg-gioco-risposta {
+	font-size: 20px;
+	padding: 10px 0;
+}
+.lg-gioco-immagine {
+	text-align: center;
+	margin: 10px 0 5px 0;
+}
+.lg-gioco-immagine img {
+	width: 240px;
+	border: 5px solid #f2395b;
+}
+.lg-gioco-corretta {
+	text-align: center;
+	margin: 15px 0 10px 0;
+}
+.lg-gioco-corretta img {
+	width: 240px;
+}
+.lg-gioco-sbagliata {
+	text-align: center;
+	margin: 15px 0 10px 0;
+}
+.lg-gioco-sbagliata img {
+	width: 240px;
+}
+.lg-gioco-risposte {
+	padding: 10px 10px 0 10px;
+	font-size: 15px;
+	background-color: #ffffff;
+	min-height: 215px;
+	margin-bottom: 5px;
+	border: 5px solid #126381;
+	border-radius: 25px;
+}
+.lg-gioco-risposta-1, .lg-gioco-risposta-2, .lg-gioco-risposta-3, .lg-gioco-risposta-4 {
+	margin-bottom: 10px;
+}
+.lg-gioco-a, .lg-gioco-risposta-a, .lg-gioco-b, .lg-gioco-risposta-b, .lg-gioco-c, .lg-gioco-risposta-c, .lg-gioco-d, .lg-gioco-risposta-d {
+	display: inline;
+}
+.lg-gioco-a, .lg-gioco-b, .lg-gioco-c, .lg-gioco-d {
+	font-weight: bold;
+}
+.lg-vita-1, .lg-vita-2, .lg-vita-3, .lg-vita-4, .lg-vita-5 {
+	margin-right: 4px;
+	display: inline-block;
+}
+.lg-message {
+	font-size: 27px;
+	padding: 30px 0;
+}
+.lg-gioco-testo {
+	font-size: 27px;
+	padding: 30px 0;
+}
+.lg-gioco-ico {
+	display: inline-block;
+	border: 1px solid #fff;
+	padding: 5px;
+	margin: 5px;
+}
+.lg-gioco-ico img {
+	width: 120px;
+}
+.lg-gioco-ico:hover {
+	display: inline-block;
+	border: 1px solid #00ade3;
+	cursor: pointer;
+}
+.lg-gioco-bottoni {
+	text-align: center;
+}
+.lg-gioco-bottoni img {
+	width: 60px;
+}
+.lg-gioco-bottone-1, .lg-gioco-bottone-2, .lg-gioco-bottone-3, .lg-gioco-bottone-4 {
+	display: inline-block;
+	margin: 0 10px;
+}
+/* RISPOSTA */
+.lg-gioco-bottoni-risposta {
+	text-align: center;
+}
+.lg-gioco-bottone-approfondisci {
+	display: inline-block;
+	margin: 0 10px;
+}
+.lg-gioco-bottone-continuailgioco {
+	display: inline-block;
+	margin: 0 10px;
+}
+/* PUNTEGGIO */
+.lg-punteggio {
+	text-align: center;
+}
+.lg-punteggio-punti {
+	font-size: 60px;
+	font-weight: bold;
+	color: #FF0004;
+	margin: 30px 0;
+}
+.lg-punteggio-commento {
+	font-size: 30px;
+	font-weight: bold;
+	color: #00ade3;
+	margin: 30px 0;
+}
+.lg-risultato {
+	margin-top: 100px;
+	font-size: 27px;
+	padding: 5px 0;
+	text-align: center;
+	font-weight: bold;
+	text-align: center;
+}
+/* FINE */
+.lg-fine {
+}
+.lg-gioco-bottoni-fine {
+	text-align: center;
+	margin-top: 100px;
+}
+/* COMPORTAMENTI */
+.nascondi {
+	display: none
+}
+.mostra {
+	display: block
+}
+.rispostacorretta {
+	text-align: center;
+	color: #2fa53e;
+	font-weight: bold;
+}
+.rispostasbagliata {
+	text-align: center;
+	color: #b62724;
+	font-weight: bold;
+}
+/* ELEMENTI */
+.loghi img {
+	max-width: 110px;
+}
+.bg-intro {
+	background-color: #00ade3;
+}
+.bg-intro {
+	background-color: #00ade3;
+}
+.logo-intro img {
+	max-width: 320px;
+}
+.bg-tema-1 {
+	background-color: #00ade3;
+}
+.bg-tema-2 {
+	background-color: #00ade3;
+}
+.bg-tema-3 {
+	background-color: #00ade3;
+}
+.bg-tema-4 {
+	background-color: #00ade3;
+}
+.bg-tema-5 {
+	background-color: #00ade3;
+}
+
+@media screen and (min-width: 1024px) {
+.logo-intro img {
+	max-width: 720px;
+}
+}
+
+@media screen and (max-width:800px) {
+#topbar {
+	margin-left: 1%;
+	margin-right: 1%;
+	width: 96%;
+}
+#navContent {
+	margin: 1%;
+	width: 98%;
+}
+#game1 {
+	margin: 1%;
+	width: 98%;
+}
+#game2 {
+	margin: 1%;
+	width: 98%;
+}
+.lg-main {
+	margin: 1%;
+	width: 98%;
+}
+}
+
+@media screen and (max-width:460px) {
+.option {
+	width: 80%;
+	margin-top: 5%;
+}
+}
