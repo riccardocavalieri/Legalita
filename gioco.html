@@ -1,66 +1,58 @@
-<!doctype html>
-<html>
+﻿<!doctype html>
+<html ng-app="legalitaGameApp">
 <head>
-<meta charset="utf-8">
-<meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Legalità Game</title>
-<link rel="stylesheet" type="text/css" href="css/style.css">
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Legalità Game</title>
+    <link rel="stylesheet" type="text/css" href="css/style.css" />
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.1/angular.min.js"></script>
+    <script src="js/jquery-1.11.2.min.js" type="text/javascript"></script>
+    <script type="text/javascript" src="js/legalitaApp.js"></script>
 </head>
 
 <body>
-<div class="lg-main">
-  <div class="lg-header"><a href="index.html" >LEGALITÀ GAME</a></div>
-  <div class="lg-page">
-    <div class="lg-gioco">
-      <div class="lg-barragioco">
-        <div class="lg-barragioco-vite">
-          <div class="lg-vita-1 vivo"></div>
-          <div class="lg-vita-2 vivo"></div>
-          <div class="lg-vita-3 vivo"></div>
-          <div class="lg-vita-4 vivo"></div>
-          <div class="lg-vita-5 vivo"></div>
+    <div class="lg-main" ng-controller="QuizController">
+        <div class="lg-header"><a href="index.html">LEGALITÀ GAME</a></div>
+        <div class="lg-page">
+            <div class="lg-gioco">
+                <div class="lg-barragioco">
+                    <div class="lg-barragioco-vite">
+                        <div class="lg-vita-1 {{GetCssVita(1)}}"></div>
+                        <div class="lg-vita-2 {{GetCssVita(2)}}"></div>
+                        <div class="lg-vita-3 {{GetCssVita(3)}}"></div>
+                        <div class="lg-vita-4 {{GetCssVita(4)}}"></div>
+                        <div class="lg-vita-5 {{GetCssVita(5)}}"></div>
+                    </div>
+                    <div class="lg-barragioco-avatar">
+                        <div class="lg-barragioco-avatar-message">{{Profile.currentTema.nome}}</div>
+                        <img src="{{Profile.avatar.img}}" />
+                    </div>
+                    <div class="superclear"></div>
+                </div>
+                <div class="lg-gioco-domanda">{{Profile.domandaCorrente.domanda}}</div>
+                <div class="lg-gioco-immagine" ng-class="{ nascondi: HaRisposto }"><img src="{{Profile.domandaCorrente.img}}" /></div>
+                <div class="lg-gioco-corretta" ng-class="{ nascondi: (!HaRisposto || !HaRispostoCorrettamente)}"><img src="img/risposta-1.png" /></div>
+                <div class="lg-gioco-sbagliata" ng-class="{ nascondi: (!HaRisposto || HaRispostoCorrettamente)}"><img src="img/risposta-0.png" /></div>
+                <div class="lg-gioco-risposte">
+                    <div ng-repeat="risposta in Profile.domandaCorrente.risposte" class="lg-gioco-risposta-{{ $index + 1 }}">
+                        <div class="lg-gioco-{{risposta.id.toLowerCase()}}">{{risposta.id}}:</div>
+                        <div class="lg-gioco-risposta-{{risposta.id.toLowerCase()}}">{{risposta.risposta}}</div>
+                    </div>
+                </div>
+                <div class="lg-gioco-bottoni" ng-class="{ nascondi: HaRisposto }">
+                    <div class="lg-gioco-bottone-1"> <a ng-click="Rispondi('A')" href=""><img src="img/b-1.png" /></a> </div>
+                    <div class="lg-gioco-bottone-2"> <a ng-click="Rispondi('B')" href=""><img src="img/b-2.png" /></a> </div>
+                    <div class="lg-gioco-bottone-3"> <a ng-click="Rispondi('C')" href=""><img src="img/b-3.png" /></a> </div>
+                    <div class="lg-gioco-bottone-4"> <a ng-click="Rispondi('D')" href=""><img src="img/b-4.png" /></a> </div>
+                </div>
+                <div class="lg-gioco-bottoni-risposta"  ng-class="{ nascondi: !HaRisposto }">
+                    <div class="lg-gioco-bottone-approfondisci"> <a href="{{Profile.domandaCorrente.linkApprofondimento}}" target="_blank"><img src="img/approfondisci.png" /></a> </div>
+                    <div class="lg-gioco-bottone-continuailgioco"> <a href="gioco.html"><img src="img/continuailgioco.png" /></a> </div>
+                </div>
+            </div>
         </div>
-        <div class="lg-barragioco-avatar">
-          <div class="lg-barragioco-avatar-message">SCUOLA</div>
-          <img src="img/avatar-1.png"/> </div>
-        <div class="superclear"></div>
-      </div>
-      <div class="lg-gioco-domanda">Un ragazzo viene accusato e punito per un graffito sulla facciata della scuola. Tu però vieni a sapere che è stato un tuo amico: come ti comporti?</div>
-      <div class="lg-gioco-immagine"><img src="img/foto-1.jpg"/></div>
-      <div class="lg-gioco-corretta nascondi"><img src="img/risposta-1.png"/></div>
-      <div class="lg-gioco-sbagliata nascondi"><img src="img/risposta-0.png"/></div>
-      <div class="lg-gioco-risposte">
-        <div class="lg-gioco-risposta-1">
-          <div class="lg-gioco-a">A:</div>
-          <div class="lg-gioco-risposta-a">Comunico la situazione al preside attraverso il comitato studenti studenti studenti studenti studenti.</div>
-        </div>
-        <div class="lg-gioco-risposta-2">
-          <div class="lg-gioco-b">B:</div>
-          <div class="lg-gioco-risposta-b">Lascio perdere, non vorrei pagare io i costi di riparazione o prendermi la colpa!</div>
-        </div>
-        <div class="lg-gioco-risposta-3">
-          <div class="lg-gioco-c">C:</div>
-          <div class="lg-gioco-risposta-c">Cerco di far commissionare il lavoro a un'impresa di miei parenti studentistudenti studenti studenti.</div>
-        </div>
-        <div class="lg-gioco-risposta-4">
-          <div class="lg-gioco-d">D:</div>
-          <div class="lg-gioco-risposta-d">Rompo ulteriormente il muro di far commissionare il lavoro a un'impresa di miei parenti studentistudenti studenti studenti.</div>
-        </div>
-      </div>
-      <div class="lg-gioco-bottoni">
-        <div class="lg-gioco-bottone-1"> <a href="risposta.html"><img src="img/b-1.png" /></a> </div>
-        <div class="lg-gioco-bottone-2"> <a href="risposta.html"><img src="img/b-2.png" /></a> </div>
-        <div class="lg-gioco-bottone-3"> <a href="risposta.html"><img src="img/b-3.png" /></a> </div>
-        <div class="lg-gioco-bottone-4"> <a href="risposta.html"><img src="img/b-4.png" /></a> </div>
-      </div>
-      <div class="lg-gioco-bottoni-risposta nascondi">
-        <div class="lg-gioco-bottone-approfondisci"> <a href="link-esterno.html" target="_blank"><img src="img/approfondisci.png" /></a> </div>
-        <div class="lg-gioco-bottone-continuailgioco"> <a href="gioco.html"><img src="img/continuailgioco.png" /></a> </div>
-      </div>
+        <div class="lg-footer">Copyright &copy; 2016 &middot; <a href="index.html">Legalità Game</a></div>
     </div>
-  </div>
-  <div class="lg-footer">Copyright &copy; 2016 &middot; <a href="index.html" >Legalità Game</a></div>
-</div>
 </body>
 </html>

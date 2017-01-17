@@ -17,7 +17,7 @@
   <div class="lg-page" ng-controller="AvatarController as avatars">
     <div class="lg-avatar">
         <div class="lg-message">Scegli il tuo Avatar</div>
-        <div ng-repeat="avatar in avatars.available" class="lg-avatar-ico lg-avatar-{{avatar.id}}"> <a href="tema.html"><img src="img/{{avatar.img}}" /></a> </div>
+        <div ng-repeat="avatar in avatars.available" class="lg-avatar-ico lg-avatar-{{avatar.id}}"> <a href="tema.html" ng-click="setAvatar({{$index}})"><img src="{{avatar.img}}" /></a> </div>
     </div>
   </div>
   <div class="lg-footer">Copyright &copy; 2016 &middot; <a href="index.html#" >Legalità Game</a></div>
