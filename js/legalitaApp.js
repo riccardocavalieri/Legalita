@@ -56,16 +56,17 @@ app.controller('AvatarController', ['$scope', 'UserProfileService',
         };
 }]);
 
-app.controller('TemiController', function () {
-    var temi = this;
-    temi.available = [
-        { id: "1", nome: "Scuola", img: "img/tema-1.png" },
-        { id: "2", nome: "Social Network", img: "img/tema-2.png" },
-        { id: "3", nome: "Mafia", img: "img/tema-3.png" },
-        { id: "4", nome: "Giochi", img: "img/tema-4.png" },
-        { id: "5", nome: "Famiglia", img: "img/tema-5.png" }
-    ];
-});
+app.controller('TemiController', ['$scope', 'UserProfileService',
+    function ($scope, UserProfileService) {
+        var temi = this;
+        temi.available = [
+            { id: "1", nome: "Scuola", img: "img/tema-1.png" },
+            { id: "2", nome: "Social Network", img: "img/tema-2.png" },
+            { id: "3", nome: "Mafia", img: "img/tema-3.png" },
+            { id: "4", nome: "Giochi", img: "img/tema-4.png" },
+            { id: "5", nome: "Famiglia", img: "img/tema-5.png" }
+        ];
+    }]);
 
 app.controller('QuizController', ['$scope', 'UserProfileService',
     function ($scope, UserProfileService) {
