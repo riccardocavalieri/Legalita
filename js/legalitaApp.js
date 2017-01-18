@@ -1,16 +1,55 @@
-var app = angular.module('legalitaGameApp', []);
-app.factory('UserProfileService', UserProfileService);
+var app = angular.module('legalitaGameApp', ["ngRoute"], ['ngSanitize']);
+
+app.config(function ($routeProvider, $locationProvider) {
+    $routeProvider
+    .when("/", {
+        templateUrl: "home.html"
+    })
+    .when("/tema", {
+        templateUrl: "tema.html"
+    })
+    .when("/temaIntro", {
+        templateUrl: "tema-intro.html"
+    })
+        .when("/avatar", {
+            templateUrl: "avatar.html"
+        })
+    .when("/gioco", {
+        templateUrl: "gioco.html"
+    });
+
+    // use the HTML5 History API
+    $locationProvider.html5Mode(true);
+});
+
+
+app.config([
+		'$compileProvider',
+		function ($compileProvider) {
+		    $compileProvider.imgSrcSanitizationWhitelist(/^\s*(https?|ftp|file|blob|mailto|chrome-extension):/);
+		    $compileProvider.aHrefSanitizationWhitelist(/^\s*(https?|ftp|file|blob|mailto|chrome-extension):/);
+		}
+]);
+
+
+
+app.service('UserProfileService', UserProfileService);
+
+
+
 
 function UserProfileService() {
-    
+
+    var profile;
+
     function decreaseLives() {
         if (profile.lives > 0) {
-            profile.lives--;
+            profile.lives = profile.lives - 1;
         }
     }
 
     function addPoint() {
-        profile.points++;
+        profile.points = profile.points + 1;
     }
     /*
     var profile = {
@@ -21,12 +60,15 @@ function UserProfileService() {
         currentQuestion: null
     };
     */
-    var profile = {
-        lives:3,
-        points: 10,
-        avatar: { id: "3", img: "img/avatar-3.png" },
-        currentTema: { id: "1", nome: "Scuola", img: "img/tema-1.png" },
-        domandaCorrente: domande[4]
+
+    if (!profile) {
+        profile = {
+            lives: 5,
+            points: 0,
+            avatar: null,
+            currentTema: null,
+            domandaCorrente: null
+        }
     };
 
     return profile;
@@ -51,12 +93,12 @@ app.controller('AvatarController', ['$scope', 'UserProfileService',
 
         $scope.Profile = UserProfileService;
 
-        $scope.setAvatar = function(index) {
-            $scope.Profile.avatar = avatars.available[index - 1];
+        $scope.setAvatar = function (avatarId) {
+            $scope.Profile.avatar = avatars.available[avatarId - 1];
         };
 }]);
 
-app.controller('TemiController', ['$scope', 'UserProfileService',
+app.controller('TemaController', ['$scope', 'UserProfileService',
     function ($scope, UserProfileService) {
         var temi = this;
         temi.available = [
@@ -66,13 +108,28 @@ app.controller('TemiController', ['$scope', 'UserProfileService',
             { id: "4", nome: "Giochi", img: "img/tema-4.png" },
             { id: "5", nome: "Famiglia", img: "img/tema-5.png" }
         ];
+
+        $scope.Profile = UserProfileService;
+
+        $scope.setTema = function (temaId) {
+            $scope.Profile.currentTema = temi.available[temaId-1];
+        };
+    }]);
+
+app.controller('TemaIntroController', ['$scope', 'UserProfileService',
+    function ($scope, UserProfileService) {
+
+        $scope.Profile = UserProfileService;
+
     }]);
 
 app.controller('QuizController', ['$scope', 'UserProfileService',
     function ($scope, UserProfileService) {
         $scope.Profile = UserProfileService;
+        $scope.Profile.domandaCorrente = GetDomandaCorrente($scope.Profile.currentTema.id);
         $scope.HaRisposto = false;
         $scope.HaRispostoCorrettamente = false;
+        $scope.HaApprofondimento = $scope.Profile.domandaCorrente.linkApprofondimento != null && $scope.Profile.domandaCorrente.linkApprofondimento != "";
 
         $scope.GetCssVita = function (index) {
             return (index <= $scope.Profile.lives) ? "vivo" : "morto";
@@ -81,16 +138,27 @@ app.controller('QuizController', ['$scope', 'UserProfileService',
         $scope.Rispondi = function (risposta) {
             $scope.HaRisposto = true;
             $scope.HaRispostoCorrettamente = (risposta == $scope.Profile.domandaCorrente.rispostaCorretta);
+            if (!$scope.HaRispostoCorrettamente) {
+                $scope.Profile.decreaseLives();
+            }
+            else {
+                $scope.Profile.addPoint();
+            }
         };
     }]);
 
+function GetDomandaCorrente(temaId) {
+    return domande.filter(function (obj) { return (obj.temaId == temaId); })[0];
+}
 
 var domande = [
+    /* SCUOLA */
     {
         id: 1,
+        temaId: 1,
         domanda: "Scopri che alle elezioni dei rappresentanti di classe vengono manipolati i voti, cosa decidi di fare?",
         img: "img/foto-1.jpg",
-        linkApprofondimento: null,
+        linkApprofondimento: "",
         rispostaCorretta: "B",
         risposte: [
             { id: "A", risposta: "Se l’esito mi aggrada non faccio nulla." },
@@ -101,9 +169,10 @@ var domande = [
     },
     {
         id: 2,
+        temaId: 1,
         domanda: "All’interno della tua scuola trovi un muro crepato, che nessuno ha intenzione di riparare: come agisci?",
         img: "img/foto-2.jpg",
-        linkApprofondimento: null,
+        linkApprofondimento: "",
         rispostaCorretta: "A",
         risposte: [
             { id: "A", risposta: "Comunico la situazione al preside attraverso il comitato studenti." },
@@ -114,9 +183,10 @@ var domande = [
     },
     {
         id: 3,
+        temaId: 1,
         domanda: "Un ragazzo viene accusato e punito per un graffito sulla facciata della scuola. Tu però vieni a sapere che è stato un tuo amico: come ti comporti?",
         img: "img/foto-3.jpg",
-        linkApprofondimento: null,
+        linkApprofondimento: "",
         rispostaCorretta: "C",
         risposte: [
             { id: "A", risposta: "Apprezzo il graffito, perché mi piace l’arte illegale." },
@@ -127,9 +197,10 @@ var domande = [
     },
     {
         id: 4,
+        temaId: 1,
         domanda: "Se vedi un tuo compagno di classe che usa violenza contro un ragazzino più piccolo, che cosa fai?",
         img: "img/foto-4.jpg",
-        linkApprofondimento: null,
+        linkApprofondimento: "",
         rispostaCorretta: "B",
         risposte: [
             { id: "A", risposta: "Uso violenza anche io perché faccio parte del branco." },
@@ -140,6 +211,7 @@ var domande = [
     },
     {
         id: 5,
+        temaId: 1,
         domanda: "A scuola scopri che un tuo compagno sta facendo girare su WhatsApp una foto ridicola di un altro alunno senza il suo consenso: che cosa fai?",
         img: "img/foto-5.jpg",
         linkApprofondimento: "http://scuola.regione.emilia-romagna.it/qualificazione-scolastica/educazione-alla-cittadinanza-attiva/sicurezza-e-legalita",
@@ -149,6 +221,296 @@ var domande = [
             { id: "B", risposta: "Fai girare anche tu quella foto." },
             { id: "C", risposta: "Segnali che si tratta di un reato." },
             { id: "D", risposta: "Ne salvi una copia sul telefono." }
+        ]
+    },
+
+    /* SOCIAL NETWORK */
+    {
+        id: 6,
+        temaId: 2,
+        domanda: "Ho fatto una foto assieme a una mia amica e la pubblico senza chiederle il permesso:",
+        img: "img/foto-6.jpg",
+        linkApprofondimento: "http://www.dirittierisposte.it/Schede/Tutela-della-privacy/Diritti/la_privacy_nei_social_media_id1129494_art.aspx",
+        rispostaCorretta: "A",
+        risposte: [
+            { id: "A", risposta: "rischio una denuncia" },
+            { id: "B", risposta: "non mi succede nulla... tanto è solo una foto!" },
+            { id: "C", risposta: "è sufficiente non taggarla" },
+            { id: "D", risposta: "le faccio passare l'arrabbiatura mostrandole i like ottenuti" }
+        ]
+    },
+    {
+        id: 7,
+        temaId: 2,
+        domanda: "Se mio fratello crea un profilo falso per rimorchiare online spacciandosi per qualcun altro, in cosa si imbatte?",
+        img: "img/foto-7.jpg",
+        linkApprofondimento: "",
+        rispostaCorretta: "B",
+        risposte: [
+            { id: "A", risposta: "trova un sacco di belle ragazze, quasi quasi ne apro uno anche io!" },
+            { id: "B", risposta: "rischia una denuncia per sostituzione di persona." },
+            { id: "C", risposta: "qualcuno potrebbe scoprirlo e umiliarlo." },
+            { id: "D", risposta: "la situazione potrebbe scappargli di mano." }
+        ]
+    },
+    {
+        id: 8,
+        temaId: 2,
+        domanda: "Qual è l’età minima per poter aprire un profilo sui principali social network?",
+        img: "img/foto-8.jpg",
+        linkApprofondimento: "C",
+        rispostaCorretta: "",
+        risposte: [
+            { id: "A", risposta: "35/40 anni" },
+            { id: "B", risposta: "8/10 anni" },
+            { id: "C", risposta: "13/14 anni" },
+            { id: "D", risposta: "18 anni" }
+        ]
+    },
+    {
+        id: 9,
+        temaId: 2,
+        domanda: "Tua cugina continua a ricevere messaggi da uno sconosciuto con domande personali, che cosa le consigli?",
+        img: "img/foto-9.jpg",
+        linkApprofondimento: "https://www.commissariatodips.it/approfondimenti/social-network/approfondimenti-normativi.html",
+        rispostaCorretta: "D",
+        risposte: [
+            { id: "A", risposta: "Smettere di usare Internet" },
+            { id: "B", risposta: "Rispondere con informazioni false" },
+            { id: "C", risposta: "Continuare a parlargli e fissare un appuntamento" },
+            { id: "D", risposta: "Bloccare il contatto e segnalarlo" }
+        ]
+    },
+    {
+        id: 10,
+        temaId: 2,
+        domanda: "Se pubblichi su Snapchat un contenuto offensivo NON sei perseguibile dalla legge.",
+        img: "img/foto-10.jpg",
+        linkApprofondimento: "https://docs.google.com/viewer?a=v&pid=sites&srcid=ZGVmYXVsdGRvbWFpbnxhZ2VwaWFjZW56YTR8Z3g6MTUwYTQ3NTg0ZGFhMWYwMg",
+        rispostaCorretta: "B",
+        risposte: [
+            { id: "A", risposta: "È vero" },
+            { id: "B", risposta: "Falso, sono perseguibile penalmente" },
+            { id: "C", risposta: "Dipende da chi offendo" },
+            { id: "D", risposta: "Sono perseguibile solo mentre il contenuto è online" }
+        ]
+    },
+
+
+    /* MAFIA */
+    {
+        id: 11,
+        temaId: 3,
+        domanda: "L'Isis è una mafia?",
+        img: "img/foto-11.jpg",
+        linkApprofondimento: "http://www.sapere.it/sapere/strumenti/domande-risposte/storia-civilta/che-cosa-e-isis.html",
+        rispostaCorretta: "A",
+        risposte: [
+            { id: "A", risposta: "No, perché a differenza della mafia usa pretesti di stampo religioso." },
+            { id: "B", risposta: "Sì, è una mafia perché protegge tutte le persone in cambio di denaro e benessere." },
+            { id: "C", risposta: "Sì, perché ha le stesse origini delle altre mafie." },
+            { id: "D", risposta: "Sì, perché diffonde terrore." }
+        ]
+    },
+    {
+        id: 12,
+        temaId: 3,
+        domanda: "Perché i cittadini non si ribellano alla mafia?",
+        img: "img/foto-12.jpg",
+        linkApprofondimento: "http://www.cortocircuito.re.it/",
+        rispostaCorretta: "C",
+        risposte: [
+            { id: "A", risposta: "Perché hanno paura della polizia." },
+            { id: "B", risposta: "Perché vorrebbero che la mafia continuasse a vivere." },
+            { id: "C", risposta: "Non è vero che non si ribellano, una parte di loro si ribella per rivendicare la propria libertà." },
+            { id: "D", risposta: "Perché ci guadagnano." }
+        ]
+    },
+    {
+        id: 13,
+        temaId: 3,
+        domanda: "Quali tra questi comportamenti può essere ritenuto mafioso?",
+        img: "img/foto-13.jpg",
+        linkApprofondimento: "http://www.addiopizzo.org/",
+        rispostaCorretta: "B",
+        risposte: [
+            { id: "A", risposta: "Rubare la ragazza o il ragazzo a qualcuno." },
+            { id: "B", risposta: "Prendere la merenda a un ragazzo più piccolo dopo averlo minacciato." },
+            { id: "C", risposta: "Fare la spia o denunciare un fatto grave." },
+            { id: "D", risposta: "Violare la privacy di un’altra persona." }
+        ]
+    },
+    {
+        id: 14,
+        temaId: 3,
+        domanda: "A che età un giovane entra nella mafia?",
+        img: "img/foto-14.jpg",
+        linkApprofondimento: "http://www.libera.it/flex/cm/pages/ServeBLOB.php/L/IT/IDPagina/1",
+        rispostaCorretta: "C",
+        risposte: [
+            { id: "A", risposta: "A 11 anni." },
+            { id: "B", risposta: "A 18 anni." },
+            { id: "C", risposta: "Non c'è un'età." },
+            { id: "D", risposta: "A 30 anni." }
+        ]
+    },
+    {
+        id: 15,
+        temaId: 3,
+        domanda: "Come si può coinvolgere una persona nelle attività mafiose?",
+        img: "img/foto-15.jpg",
+        linkApprofondimento: "http://www.regione.emilia-romagna.it/notizie/2016/ottobre/legalita-il-testo-unico-regionale-e-legge-lemilia-romagna-rafforza-la-lotta-alle-mafie-e-il-sostegno-alle-vittime",
+        rispostaCorretta: "A",
+        risposte: [
+            { id: "A", risposta: "Promettendo soldi facili in cambio di favori." },
+            { id: "B", risposta: "Attraverso una campagna di adesione volontaria." },
+            { id: "C", risposta: "Approfittando del suo malessere o della sua solitudine." },
+            { id: "D", risposta: "Si selezionano i più meritevoli e li si invita." }
+        ]
+    },
+
+
+    /* GIOCO D'AZZARDO */
+    {
+        id: 16,
+        temaId: 4,
+        domanda: "Che cos'è il gioco d'azzardo?",
+        img: "img/foto-16.jpg",
+        linkApprofondimento: "http://www.harmoniamentis.it/cont/ludopatia-e-gioco-patologico/3279/definizione-gioco-azzardo-patologico.asp",
+        rispostaCorretta: "A",
+        risposte: [
+            { id: "A", risposta: "Un’attività in cui rischi di perdere beni e denaro." },
+            { id: "B", risposta: "Un modo per guadagnare facilmente." },
+            { id: "C", risposta: "Un gioco individuale contro la solitudine." },
+            { id: "D", risposta: "Un’attività che educa alla vita." }
+        ]
+    },
+    {
+        id: 17,
+        temaId: 4,
+        domanda: "Quale impatto ha il gioco d’azzardo sulla famiglia?",
+        img: "img/foto-17.jpg",
+        linkApprofondimento: "http://www.benessere.com/psicologia/arg00/dipendenza_gioco_azzardo.htm",
+        rispostaCorretta: "A",
+        risposte: [
+            { id: "A", risposta: "Porta problemi emotivi, economici, sociali e di salute." },
+            { id: "B", risposta: "Porta benefici e soldi extra." },
+            { id: "C", risposta: "Solitamente non ha alcun effetto." },
+            { id: "D", risposta: "Un consolidamento dei rapporti umani." }
+        ]
+    },
+    {
+        id: 18,
+        temaId: 4,
+        domanda: "Nel gioco d'azzardo, quando si supera il limite tra passione e dipendenza?",
+        img: "img/foto-18.jpg",
+        linkApprofondimento: "",
+        rispostaCorretta: "D",
+        risposte: [
+            { id: "A", risposta: "Quando finisce il divertimento." },
+            { id: "B", risposta: "Quando ti costringono." },
+            { id: "C", risposta: "Quando lo vorresti fare tutti i giorni." },
+            { id: "D", risposta: "Quando si perde la capacità di autocontrollo." }
+        ]
+    },
+    {
+        id: 19,
+        temaId: 4,
+        domanda: "Quale di queste motivazioni non porta al gioco d'azzardo?",
+        img: "img/foto-19.jpg",
+        linkApprofondimento: "http://www.avvisopubblico.it/home/documentazione/gioco-dazzardo/sintesi-della-normativa-in-materia-di-gioco-dazzardo-e-ludopatia/",
+        rispostaCorretta: "D",
+        risposte: [
+            { id: "A", risposta: "La sete di guadagno." },
+            { id: "B", risposta: "Conoscere nuove persone." },
+            { id: "C", risposta: "La voglia di affrontare la depressione." },
+            { id: "D", risposta: "La voglia di divertirsi e socializzare senza fini di lucro." }
+        ]
+    },
+    {
+        id: 20,
+        temaId: 4,
+        domanda: "Quale di questi comportamenti è lecito per un minorenne?",
+        img: "img/foto-20.jpg",
+        linkApprofondimento: "http://www.andinrete.it/portale/index.php?page=40&sid=6aee58421ff639c556ae77e3077f73e3",
+        rispostaCorretta: "A",
+        risposte: [
+            { id: "A", risposta: "Informarsi sui rischi del gioco d’azzardo." },
+            { id: "B", risposta: "Entrare nelle aree destinate a slot machine e lotterie." },
+            { id: "C", risposta: "Accedere a una sala scommesse o a un casinò." },
+            { id: "D", risposta: "Partecipare a giochi con vincite in denaro." }
+        ]
+    },
+
+    /* FAMIGLIA */
+    {
+        id: 21,
+        temaId: 5,
+        domanda: "È giusto che i genitori pubblichino cose private dei figli su internet? ",
+        img: "img/foto-21.jpg",
+        linkApprofondimento: "http://www.garanteprivacy.it/web/guest/home/docweb/-/docweb-display/docweb/4231738",
+        rispostaCorretta: "D",
+        risposte: [
+            { id: "A", risposta: "No, raccolgono like senza meritarli." },
+            { id: "B", risposta: "Sì, al figlio fa sicuramente piacere." },
+            { id: "C", risposta: "Sì, ha la patria potestà e può decidere per il figlio." },
+            { id: "D", risposta: "No, violerebbe la privacy del minore." }
+        ]
+    },
+    {
+        id: 22,
+        temaId: 5,
+        domanda: "Si può far lavorare un figlio prima che compia 15 anni?",
+        img: "img/foto-22.jpg",
+        linkApprofondimento: "http://www.anfos.it/sicurezza/tutela-lavoro-minorile/",
+        rispostaCorretta: "B",
+        risposte: [
+            { id: "A", risposta: "Sì, per di piccoli lavoretti se il figlio non vuole studiare." },
+            { id: "B", risposta: "No, la normativa fissa a 15 anni l’età per accedere al mondo del lavoro." },
+            { id: "C", risposta: "Sì, ne ha la patria potestà e quindi sa che cosa è bene per lui." },
+            { id: "D", risposta: "No, non ha le caratteristiche per affrontare qualsiasi tipo di lavoro." }
+        ]
+    },
+    {
+        id: 23,
+        temaId: 5,
+        domanda: "È giusto che i genitori impongano il proprio credo religioso e/o politico e/o alimentare (es: vegano) ai figli?",
+        img: "img/foto-23.jpg",
+        linkApprofondimento: "",
+        rispostaCorretta: "A",
+        risposte: [
+            { id: "A", risposta: "No, ognuno è libero di fare le proprie scelte, senza compromettere la salute." },
+            { id: "B", risposta: "Sì, finché sono minorenni." },
+            { id: "C", risposta: "Sì, ogni famiglia deve rispettare le proprie tradizioni. " },
+            { id: "D", risposta: "No, la religione e la dieta sono regolate dalla legge." }
+        ]
+    },
+    {
+        id: 24,
+        temaId: 5,
+        domanda: "È lecito costringere i propri figli minorenni a chiedere l'elemosina?",
+        img: "img/foto-24.jpg",
+        linkApprofondimento: "",
+        rispostaCorretta: "B",
+        risposte: [
+            { id: "A", risposta: "Sì, ma solo se sono molto bravi a raccogliere denaro." },
+            { id: "B", risposta: "No, si commette il reato di impiego di minori nell’accattonaggio." },
+            { id: "C", risposta: "Sì, quando i genitori sono in difficoltà economica." },
+            { id: "D", risposta: "No, ma i figli possono farlo di spontanea volontà." }
+        ]
+    },
+    {
+        id: 25,
+        temaId: 5,
+        domanda: "È giusto che i genitori impongano ai propri bambini le loro decisioni su istruzione, lavoro e scelte di vita?",
+        img: "img/foto-25.jpg",
+        linkApprofondimento: "http://www.garanteinfanzia.org/diritti ",
+        rispostaCorretta: "D",
+        risposte: [
+            { id: "A", risposta: "No, ogni bambino è in grado di decidere per sé." },
+            { id: "B", risposta: "Sì, i genitori sono tenuti a dare consigli ai propri figli." },
+            { id: "C", risposta: "Sì, i genitori hanno il diritto di decidere al posto dei figli perché sono più saggi." },
+            { id: "D", risposta: "No, imporre la propria volontà sui figli senza tener conto dei loro bisogni è contro i diritti dell’infanzia." }
         ]
     }
 ];
