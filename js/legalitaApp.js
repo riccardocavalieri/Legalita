@@ -102,6 +102,7 @@ app.controller('QuizController', ['$scope', 'UserProfileService',
     function ($scope, UserProfileService) {
         $scope.HaRisposto = false;
         $scope.HaRispostoCorrettamente = false;
+        $scope.RispostaFornita = "";
         $scope.Approfondimento = "";
         $scope.ProssimaPagina = "";
         
@@ -111,6 +112,7 @@ app.controller('QuizController', ['$scope', 'UserProfileService',
         };
 
         $scope.Rispondi = function (risposta) {
+            $scope.RispostaFornita = risposta;
             $scope.HaRisposto = true;
             $scope.Profile.domandePrecedenti.push($scope.Profile.domandaCorrente.id);
             $scope.HaRispostoCorrettamente = (risposta == $scope.Profile.domandaCorrente.rispostaCorretta);
@@ -136,8 +138,17 @@ app.controller('QuizController', ['$scope', 'UserProfileService',
             $scope.Profile.prossimaDomanda = GetProssimaDomanda($scope.Profile);
             $scope.HaRisposto = false;
             $scope.HaRispostoCorrettamente = false;
+            $scope.RispostaFornita = "";
             $scope.Approfondimento = $scope.Profile.domandaCorrente.linkApprofondimento != null && $scope.Profile.domandaCorrente.linkApprofondimento != "";
             $scope.ProssimaPagina = (!$scope.Profile.prossimaDomanda || $scope.Profile.lives == 0) ? "fine" : "gioco";
+        };
+
+        $scope.EvidenziaRispostaCorretta = function (risposta) {
+            return $scope.HaRisposto && risposta.id == $scope.Profile.domandaCorrente.rispostaCorretta;
+        };
+
+        $scope.EvidenziaRispostaSbagliata = function (risposta) {
+            return $scope.HaRisposto && risposta.id != $scope.Profile.domandaCorrente.rispostaCorretta && $scope.RispostaFornita == risposta.id;
         };
 
         $scope.Profile = UserProfileService;

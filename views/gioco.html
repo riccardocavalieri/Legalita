@@ -23,7 +23,7 @@
     <div class="lg-gioco-risposte">
         <div ng-repeat="risposta in Profile.domandaCorrente.risposte" class="lg-gioco-risposta-{{ $index + 1 }}">
             <div class="lg-gioco-{{risposta.id.toLowerCase()}}">{{risposta.id}}:</div>
-            <div class="lg-gioco-risposta-{{risposta.id.toLowerCase()}}">{{risposta.risposta}}</div>
+            <div class="lg-gioco-risposta-{{risposta.id.toLowerCase()}}" ng-class="{ rispostacorretta: EvidenziaRispostaCorretta(risposta), rispostasbagliata: EvidenziaRispostaSbagliata(risposta)}" >{{risposta.risposta}}</div>
         </div>
     </div>
     <div class="lg-gioco-bottoni" ng-class="{ nascondi: HaRisposto }">
