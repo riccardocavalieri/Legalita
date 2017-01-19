@@ -129,7 +129,7 @@ app.controller('QuizController', ['$scope', 'UserProfileService',
 
         $scope.Reload = function () {
 
-            if ($scope.Profile.lives == 0) {
+            if ($scope.Profile.lives == 0 || domande.length == $scope.Profile.domandePrecedenti.length) {
                 $scope.ProssimaPagina = "fine";
                 return;
             }
