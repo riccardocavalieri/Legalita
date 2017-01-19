@@ -2,21 +2,13 @@ var app = angular.module('legalitaGameApp', ['ngRoute']);
 
 app.config(function ($routeProvider, $locationProvider) {
     $routeProvider
-    .when("/", {
-        templateUrl: "home.html"
-    })
-    .when("/tema", {
-        templateUrl: "tema.html"
-    })
-    .when("/temaIntro", {
-        templateUrl: "tema-intro.html"
-    })
-        .when("/avatar", {
-            templateUrl: "avatar.html"
-        })
-    .when("/gioco", {
-        templateUrl: "gioco.html"
-    });
+    .when("/", { templateUrl: "views/home.html" })
+    .when("/tema", { templateUrl: "views/tema.html" })
+    .when("/temaIntro", { templateUrl: "views/tema-intro.html" })
+    .when("/avatar", { templateUrl: "views/avatar.html" })
+    .when("/gioco", { templateUrl: "views/gioco.html" })
+    .when("/fine", { templateUrl: "views/fine.html" })
+    ;
 
     // use the HTML5 History API
     $locationProvider.html5Mode(true);
@@ -30,7 +22,6 @@ app.config([
 		    $compileProvider.aHrefSanitizationWhitelist(/^\s*(https?|ftp|file|blob|mailto|chrome-extension):/);
 		}
 ]);
-
 
 
 app.service('UserProfileService', UserProfileService);
@@ -49,53 +40,54 @@ function UserProfileService() {
             avatar: null,
             currentTema: null,
             domandaCorrente: null,
-            decreaseLives: function () { this.lives--; },
-            addPoint: function () { this.points++; }
+            domandePrecedenti: [],
+            prossimaDomanda: null,
+            decreaseLives: function () { if (this.lives > 0) this.lives--; },
+            addPoint: function () { this.points++; },
+            reset: function () {
+                this.lives = 5;
+                this.points = 0;
+                this.avatar = null;
+                this.currentTema = null;
+                this.domandaCorrente = null;
+                this.domandePrecedenti = [];
+                this.prossimaDomanda = null;
+            }
         }
     };
 
     return profile;
 }
 
+app.controller('HomeController', ['$scope', 'UserProfileService',
+    function ($scope, UserProfileService) {
+
+        $scope.Profile = UserProfileService;
+        $scope.Profile.reset();
+    }]);
+
 
 app.controller('AvatarController', ['$scope', 'UserProfileService',
     function ($scope, UserProfileService) {
-    
-        var avatars = this;
-        avatars.current = null;
-        avatars.available = [
-          { id: "1", img: "img/avatar-1.png" },
-          { id: "2", img: "img/avatar-2.png" },
-          { id: "3", img: "img/avatar-3.png" },
-          { id: "4", img: "img/avatar-4.png" },
-          { id: "5", img: "img/avatar-5.png" },
-          { id: "6", img: "img/avatar-6.png" },
-          { id: "7", img: "img/avatar-7.png" },
-          { id: "8", img: "img/avatar-8.png" }
-        ];
 
         $scope.Profile = UserProfileService;
 
+        $scope.AvatarDisponibili = avatars;
+
         $scope.setAvatar = function (avatarId) {
-            $scope.Profile.avatar = avatars.available[avatarId - 1];
+            $scope.Profile.avatar = $scope.AvatarDisponibili[avatarId - 1];
         };
 }]);
 
 app.controller('TemaController', ['$scope', 'UserProfileService',
     function ($scope, UserProfileService) {
-        var temi = this;
-        temi.available = [
-            { id: "1", nome: "Scuola", img: "img/tema-1.png" },
-            { id: "2", nome: "Social Network", img: "img/tema-2.png" },
-            { id: "3", nome: "Mafia", img: "img/tema-3.png" },
-            { id: "4", nome: "Giochi", img: "img/tema-4.png" },
-            { id: "5", nome: "Famiglia", img: "img/tema-5.png" }
-        ];
 
         $scope.Profile = UserProfileService;
 
+        $scope.temiDisponibili = temi;
+
         $scope.setTema = function (temaId) {
-            $scope.Profile.currentTema = temi.available[temaId-1];
+            $scope.Profile.currentTema = $scope.temiDisponibili[temaId - 1];
         };
     }]);
 
@@ -108,11 +100,11 @@ app.controller('TemaIntroController', ['$scope', 'UserProfileService',
 
 app.controller('QuizController', ['$scope', 'UserProfileService',
     function ($scope, UserProfileService) {
-        $scope.Profile = UserProfileService;
-        $scope.Profile.domandaCorrente = GetDomandaCorrente($scope.Profile.currentTema.id);
         $scope.HaRisposto = false;
         $scope.HaRispostoCorrettamente = false;
-        $scope.HaApprofondimento = $scope.Profile.domandaCorrente.linkApprofondimento != null && $scope.Profile.domandaCorrente.linkApprofondimento != "";
+        $scope.Approfondimento = "";
+        $scope.ProssimaPagina = "";
+        
 
         $scope.GetCssVita = function (index) {
             return (index <= $scope.Profile.lives) ? "vivo" : "morto";
@@ -120,6 +112,7 @@ app.controller('QuizController', ['$scope', 'UserProfileService',
 
         $scope.Rispondi = function (risposta) {
             $scope.HaRisposto = true;
+            $scope.Profile.domandePrecedenti.push($scope.Profile.domandaCorrente.id);
             $scope.HaRispostoCorrettamente = (risposta == $scope.Profile.domandaCorrente.rispostaCorretta);
             if (!$scope.HaRispostoCorrettamente) {
                 $scope.Profile.decreaseLives();
@@ -128,10 +121,83 @@ app.controller('QuizController', ['$scope', 'UserProfileService',
                 $scope.Profile.addPoint();
             }
         };
+
+        $scope.Reload = function () {
+
+            if ($scope.Profile.lives == 0) {
+                $scope.ProssimaPagina = "/fine";
+                return;
+            }
+            
+            $scope.Profile.domandaCorrente = GetDomandaCorrente($scope.Profile);
+            if ($scope.Profile.domandaCorrente || $scope.Profile.currentTema.id != $scope.Profile.domandaCorrente.temaId) {
+                $scope.Profile.currentTema = temi[$scope.Profile.domandaCorrente.temaId - 1];
+            }
+            $scope.Profile.prossimaDomanda = GetProssimaDomanda($scope.Profile);
+            $scope.HaRisposto = false;
+            $scope.HaRispostoCorrettamente = false;
+            $scope.Approfondimento = $scope.Profile.domandaCorrente.linkApprofondimento != null && $scope.Profile.domandaCorrente.linkApprofondimento != "";
+            $scope.ProssimaPagina = (!$scope.Profile.prossimaDomanda || $scope.Profile.lives == 0) ? "/fine" : "/gioco";
+        };
+
+        $scope.Profile = UserProfileService;
+        $scope.Reload();
     }]);
 
-function GetDomandaCorrente(temaId) {
-    return domande.filter(function (obj) { return (obj.temaId == temaId); })[0];
+app.controller('FineController', ['$scope', 'UserProfileService',
+    function ($scope, UserProfileService) {
+
+        $scope.Profile = UserProfileService;
+
+        $scope.GetCssVita = function (index) {
+            return (index <= $scope.Profile.lives) ? "vivo" : "morto";
+        };
+
+        $scope.Commento = function () {
+            if ($scope.Profile.points <= 5)
+                return "Peggio di cos\u00ec era difficile!";
+
+            if ($scope.Profile.points <= 10)
+                return "Potevi fare meglio!";
+
+            if ($scope.Profile.points <= 15)
+                return "Bravo, ma puoi migliorare!";
+
+            if ($scope.Profile.points <= 20)
+                return "Complimenti. Molto bene!";
+
+            if ($scope.Profile.points <= 25)
+                return "Bravissimo!";
+
+            return "";
+        };
+    }]);
+
+
+function GetDomandaCorrente(profile) {
+    if (!profile.domandaCorrente || !profile.domandaCorrente.id) {
+        return domande.filter(function (obj) { return (obj.temaId == profile.currentTema.id); })[0];
+    }
+    else {
+        return GetProssimaDomanda(profile);
+    }
+}
+
+function GetProssimaDomanda(profile) {
+    if (!profile.domandaCorrente || !profile.domandaCorrente.id) {
+        return;
+        // dovrebbe tirare un eccezione
+    }
+
+    // se non ci sono altre domande mi fermo
+    if (domande.length == profile.domandaCorrente.id && domande.length == profile.domandePrecedenti.length)
+        return null;
+
+    // se sono all'ultima domanda ma non ho iniziato dal primo tema
+    if (domande.length == profile.domandaCorrente.id && domande.length > profile.domandePrecedenti.length)
+        return domande[0];
+
+    return domande.filter(function (obj) { return (obj.id == profile.domandaCorrente.id + 1); })[0];
 }
 
 var domande = [
@@ -172,7 +238,7 @@ var domande = [
         linkApprofondimento: "",
         rispostaCorretta: "C",
         risposte: [
-            { id: "A", risposta: "Apprezzo il graffito, perché mi piace l'arte illegale." },
+            { id: "A", risposta: "Apprezzo il graffito, perch\u00e9 mi piace l'arte illegale." },
             { id: "B", risposta: "Non faccio nulla, gli amici prima di tutto." },
             { id: "C", risposta: "Parlo con il mio amico per farlo confessare e poi con gli insegnanti." },
             { id: "D", risposta: "Parlo direttamente con gli insegnati denunciando l'accaduto." }
@@ -186,7 +252,7 @@ var domande = [
         linkApprofondimento: "",
         rispostaCorretta: "B",
         risposte: [
-            { id: "A", risposta: "Uso violenza anche io perché faccio parte del branco." },
+            { id: "A", risposta: "Uso violenza anche io perch\u00e9 faccio parte del branco." },
             { id: "B", risposta: "Lo fermo o chiamo un insegnante." },
             { id: "C", risposta: "Lo incito." },
             { id: "D", risposta: "Riprendo il tutto con il cellulare e lo metto su Internet." }
@@ -239,7 +305,7 @@ var domande = [
     {
         id: 8,
         temaId: 2,
-        domanda: "Qual \u00e8 l'età minima per poter aprire un profilo sui principali social network?",
+        domanda: "Qual \u00e8 l'et\u00e1 minima per poter aprire un profilo sui principali social network?",
         img: "img/foto-8.jpg",
         linkApprofondimento: "C",
         rispostaCorretta: "",
@@ -289,24 +355,24 @@ var domande = [
         linkApprofondimento: "http://www.sapere.it/sapere/strumenti/domande-risposte/storia-civilta/che-cosa-e-isis.html",
         rispostaCorretta: "A",
         risposte: [
-            { id: "A", risposta: "No, perché a differenza della mafia usa pretesti di stampo religioso." },
-            { id: "B", risposta: "S\u00ec, \u00e8 una mafia perché protegge tutte le persone in cambio di denaro e benessere." },
-            { id: "C", risposta: "S\u00ec, perché ha le stesse origini delle altre mafie." },
-            { id: "D", risposta: "S\u00ec, perché diffonde terrore." }
+            { id: "A", risposta: "No, perch\u00e9 a differenza della mafia usa pretesti di stampo religioso." },
+            { id: "B", risposta: "S\u00ec, \u00e8 una mafia perch\u00e9 protegge tutte le persone in cambio di denaro e benessere." },
+            { id: "C", risposta: "S\u00ec, perch\u00e9 ha le stesse origini delle altre mafie." },
+            { id: "D", risposta: "S\u00ec, perch\u00e9 diffonde terrore." }
         ]
     },
     {
         id: 12,
         temaId: 3,
-        domanda: "Perché i cittadini non si ribellano alla mafia?",
+        domanda: "Perch\u00e9 i cittadini non si ribellano alla mafia?",
         img: "img/foto-12.jpg",
         linkApprofondimento: "http://www.cortocircuito.re.it/",
         rispostaCorretta: "C",
         risposte: [
-            { id: "A", risposta: "Perché hanno paura della polizia." },
-            { id: "B", risposta: "Perché vorrebbero che la mafia continuasse a vivere." },
-            { id: "C", risposta: "Non \u00e8 vero che non si ribellano, una parte di loro si ribella per rivendicare la propria libertà." },
-            { id: "D", risposta: "Perché ci guadagnano." }
+            { id: "A", risposta: "Perch\u00e9 hanno paura della polizia." },
+            { id: "B", risposta: "Perch\u00e9 vorrebbero che la mafia continuasse a vivere." },
+            { id: "C", risposta: "Non \u00e8 vero che non si ribellano, una parte di loro si ribella per rivendicare la propria libert\u00e1." },
+            { id: "D", risposta: "Perch\u00e9 ci guadagnano." }
         ]
     },
     {
@@ -326,21 +392,21 @@ var domande = [
     {
         id: 14,
         temaId: 3,
-        domanda: "A che età un giovane entra nella mafia?",
+        domanda: "A che et\u00e1 un giovane entra nella mafia?",
         img: "img/foto-14.jpg",
         linkApprofondimento: "http://www.libera.it/flex/cm/pages/ServeBLOB.php/L/IT/IDPagina/1",
         rispostaCorretta: "C",
         risposte: [
             { id: "A", risposta: "A 11 anni." },
             { id: "B", risposta: "A 18 anni." },
-            { id: "C", risposta: "Non c'\u00e8 un'età." },
+            { id: "C", risposta: "Non c'\u00e8 un'et\u00e1." },
             { id: "D", risposta: "A 30 anni." }
         ]
     },
     {
         id: 15,
         temaId: 3,
-        domanda: "Come si pu\u00f2 coinvolgere una persona nelle attività mafiose?",
+        domanda: "Come si pu\u00f2 coinvolgere una persona nelle attivit\u00e1 mafiose?",
         img: "img/foto-15.jpg",
         linkApprofondimento: "http://www.regione.emilia-romagna.it/notizie/2016/ottobre/legalita-il-testo-unico-regionale-e-legge-lemilia-romagna-rafforza-la-lotta-alle-mafie-e-il-sostegno-alle-vittime",
         rispostaCorretta: "A",
@@ -362,10 +428,10 @@ var domande = [
         linkApprofondimento: "http://www.harmoniamentis.it/cont/ludopatia-e-gioco-patologico/3279/definizione-gioco-azzardo-patologico.asp",
         rispostaCorretta: "A",
         risposte: [
-            { id: "A", risposta: "Un'attività in cui rischi di perdere beni e denaro." },
+            { id: "A", risposta: "Un'attivit\u00e1 in cui rischi di perdere beni e denaro." },
             { id: "B", risposta: "Un modo per guadagnare facilmente." },
             { id: "C", risposta: "Un gioco individuale contro la solitudine." },
-            { id: "D", risposta: "Un'attività che educa alla vita." }
+            { id: "D", risposta: "Un'attivit\u00e1 che educa alla vita." }
         ]
     },
     {
@@ -393,7 +459,7 @@ var domande = [
             { id: "A", risposta: "Quando finisce il divertimento." },
             { id: "B", risposta: "Quando ti costringono." },
             { id: "C", risposta: "Quando lo vorresti fare tutti i giorni." },
-            { id: "D", risposta: "Quando si perde la capacità di autocontrollo." }
+            { id: "D", risposta: "Quando si perde la capacit\u00e1 di autocontrollo." }
         ]
     },
     {
@@ -436,7 +502,7 @@ var domande = [
         risposte: [
             { id: "A", risposta: "No, raccolgono like senza meritarli." },
             { id: "B", risposta: "S\u00ec, al figlio fa sicuramente piacere." },
-            { id: "C", risposta: "S\u00ec, ha la patria potestà e pu\u00f2 decidere per il figlio." },
+            { id: "C", risposta: "S\u00ec, ha la patria potest\u00e1 e pu\u00f2 decidere per il figlio." },
             { id: "D", risposta: "No, violerebbe la privacy del minore." }
         ]
     },
@@ -449,8 +515,8 @@ var domande = [
         rispostaCorretta: "B",
         risposte: [
             { id: "A", risposta: "S\u00ec, per di piccoli lavoretti se il figlio non vuole studiare." },
-            { id: "B", risposta: "No, la normativa fissa a 15 anni l'età per accedere al mondo del lavoro." },
-            { id: "C", risposta: "S\u00ec, ne ha la patria potestà e quindi sa che cosa \u00e8 bene per lui." },
+            { id: "B", risposta: "No, la normativa fissa a 15 anni l'et\u00e1 per accedere al mondo del lavoro." },
+            { id: "C", risposta: "S\u00ec, ne ha la patria potest\u00e1 e quindi sa che cosa \u00e8 bene per lui." },
             { id: "D", risposta: "No, non ha le caratteristiche per affrontare qualsiasi tipo di lavoro." }
         ]
     },
@@ -463,7 +529,7 @@ var domande = [
         rispostaCorretta: "A",
         risposte: [
             { id: "A", risposta: "No, ognuno \u00e8 libero di fare le proprie scelte, senza compromettere la salute." },
-            { id: "B", risposta: "S\u00ec, finché sono minorenni." },
+            { id: "B", risposta: "S\u00ec, finch\u00e9 sono minorenni." },
             { id: "C", risposta: "S\u00ec, ogni famiglia deve rispettare le proprie tradizioni. " },
             { id: "D", risposta: "No, la religione e la dieta sono regolate dalla legge." }
         ]
@@ -478,8 +544,8 @@ var domande = [
         risposte: [
             { id: "A", risposta: "S\u00ec, ma solo se sono molto bravi a raccogliere denaro." },
             { id: "B", risposta: "No, si commette il reato di impiego di minori nell'accattonaggio." },
-            { id: "C", risposta: "S\u00ec, quando i genitori sono in difficoltà economica." },
-            { id: "D", risposta: "No, ma i figli possono farlo di spontanea volontà." }
+            { id: "C", risposta: "S\u00ec, quando i genitori sono in difficolt\u00e1 economica." },
+            { id: "D", risposta: "No, ma i figli possono farlo di spontanea volont\u00e1." }
         ]
     },
     {
@@ -490,10 +556,29 @@ var domande = [
         linkApprofondimento: "http://www.garanteinfanzia.org/diritti ",
         rispostaCorretta: "D",
         risposte: [
-            { id: "A", risposta: "No, ogni bambino \u00e8 in grado di decidere per sé." },
+            { id: "A", risposta: "No, ogni bambino \u00e8 in grado di decidere per s\u00e9." },
             { id: "B", risposta: "S\u00ec, i genitori sono tenuti a dare consigli ai propri figli." },
-            { id: "C", risposta: "S\u00ec, i genitori hanno il diritto di decidere al posto dei figli perché sono pi\u00f9 saggi." },
-            { id: "D", risposta: "No, imporre la propria volontà sui figli senza tener conto dei loro bisogni \u00e8 contro i diritti dell'infanzia." }
+            { id: "C", risposta: "S\u00ec, i genitori hanno il diritto di decidere al posto dei figli perch\u00e9 sono pi\u00f9 saggi." },
+            { id: "D", risposta: "No, imporre la propria volont\u00e1 sui figli senza tener conto dei loro bisogni \u00e8 contro i diritti dell'infanzia." }
         ]
     }
+];
+
+var temi = [
+    { id: "1", nome: "Scuola", img: "img/tema-1.png" },
+    { id: "2", nome: "Social Network", img: "img/tema-2.png" },
+    { id: "3", nome: "Mafia", img: "img/tema-3.png" },
+    { id: "4", nome: "Giochi", img: "img/tema-4.png" },
+    { id: "5", nome: "Famiglia", img: "img/tema-5.png" }
+];
+
+var avatars = [
+    { id: "1", img: "img/avatar-1.png" },
+    { id: "2", img: "img/avatar-2.png" },
+    { id: "3", img: "img/avatar-3.png" },
+    { id: "4", img: "img/avatar-4.png" },
+    { id: "5", img: "img/avatar-5.png" },
+    { id: "6", img: "img/avatar-6.png" },
+    { id: "7", img: "img/avatar-7.png" },
+    { id: "8", img: "img/avatar-8.png" }
 ];
