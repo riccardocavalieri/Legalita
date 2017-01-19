@@ -4,7 +4,7 @@
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <base href="/">
+    <base href="/legalitagame/">
     <title>Legalità Game</title>
     <link rel="stylesheet" type="text/css" href="css/style.css" />
     <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.1/angular.min.js"></script>
@@ -15,13 +15,13 @@
 
 <body ng-app="legalitaGameApp">
 <div class="lg-main">
-  <div class="lg-header"><a href="/">LEGALITÀ GAME</a></div>
+  <div class="lg-header"><a ng-href="./">LEGALITÀ GAME</a></div>
   <div class="lg-page">
 
       <div ng-view></div>
 
   </div>
-  <div class="lg-footer">Copyright &copy; 2016 &middot; <a href="/" >Legalità Game</a></div>
+  <div class="lg-footer">Copyright &copy; 2016 &middot; <a ng-href="./" >Legalità Game</a></div>
 </div>
 </body>
 </html>

@@ -125,7 +125,7 @@ app.controller('QuizController', ['$scope', 'UserProfileService',
         $scope.Reload = function () {
 
             if ($scope.Profile.lives == 0) {
-                $scope.ProssimaPagina = "/fine";
+                $scope.ProssimaPagina = "fine";
                 return;
             }
             
@@ -137,7 +137,7 @@ app.controller('QuizController', ['$scope', 'UserProfileService',
             $scope.HaRisposto = false;
             $scope.HaRispostoCorrettamente = false;
             $scope.Approfondimento = $scope.Profile.domandaCorrente.linkApprofondimento != null && $scope.Profile.domandaCorrente.linkApprofondimento != "";
-            $scope.ProssimaPagina = (!$scope.Profile.prossimaDomanda || $scope.Profile.lives == 0) ? "/fine" : "/gioco";
+            $scope.ProssimaPagina = (!$scope.Profile.prossimaDomanda || $scope.Profile.lives == 0) ? "fine" : "gioco";
         };
 
         $scope.Profile = UserProfileService;
