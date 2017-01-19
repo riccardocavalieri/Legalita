@@ -9,12 +9,12 @@
         </div>
         <div class="lg-barragioco-avatar">
             <div class="lg-barragioco-avatar-message">{{Profile.currentTema.nome}}</div>
-            <img src="{{Profile.avatar.img}}" />
+            <img ng-src="{{Profile.avatar.img}}" />
         </div>
         <div class="superclear"></div>
     </div>
     <div class="lg-gioco-domanda">{{Profile.domandaCorrente.domanda}}</div>
-    <div class="lg-gioco-immagine" ng-class="{ nascondi: HaRisposto }"><img src="{{Profile.domandaCorrente.img}}" /></div>
+    <div class="lg-gioco-immagine" ng-class="{ nascondi: HaRisposto }"><img ng-src="{{Profile.domandaCorrente.img}}" /></div>
     <div class="lg-gioco-corretta" ng-class="{ nascondi: (!HaRisposto || !HaRispostoCorrettamente)}">
         <img src="img/risposta-1.png" />
         <audio id="soundRispostaCorretta" src="sound/applause.mp3" type="audio/mpeg"></audio>

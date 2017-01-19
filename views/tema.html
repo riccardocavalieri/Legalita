@@ -2,7 +2,7 @@
     <div class="lg-tema" ng-controller="TemaController">
       <div class="lg-message">Scegli il tema da cui partire</div>
       <div ng-repeat="tema in temiDisponibili" class="lg-tema-ico lg-tema-{{tema.id}}"> 
-          <a href="temaIntro" ng-click="setTema(tema.id)"><img src="{{tema.img}}" /></a>
+          <a href="temaIntro" ng-click="setTema(tema.id)"><img ng-src="{{tema.img}}" /></a>
           <div class="lg-tema-testo">{{tema.nome}}</div>
       </div>
     </div>

@@ -2,7 +2,7 @@
 <div class="lg-avatar" ng-controller="AvatarController">
     <div class="lg-message">Scegli il tuo Avatar</div>
     <div ng-repeat="avatar in AvatarDisponibili" class="lg-avatar-ico lg-avatar-{{avatar.id}}"> 
-        <a href="tema" ng-click="setAvatar(avatar.id)"><img src="{{avatar.img}}" /></a>
+        <a href="tema" ng-click="setAvatar(avatar.id)"><img ng-src="{{avatar.img}}" /></a>
     </div>
 </div>
   
