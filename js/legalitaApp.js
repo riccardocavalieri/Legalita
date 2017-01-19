@@ -1,4 +1,4 @@
-var app = angular.module('legalitaGameApp', ["ngRoute"], ['ngSanitize']);
+var app = angular.module('legalitaGameApp', ['ngRoute']);
 
 app.config(function ($routeProvider, $locationProvider) {
     $routeProvider
@@ -42,32 +42,15 @@ function UserProfileService() {
 
     var profile;
 
-    function decreaseLives() {
-        if (profile.lives > 0) {
-            profile.lives = profile.lives - 1;
-        }
-    }
-
-    function addPoint() {
-        profile.points = profile.points + 1;
-    }
-    /*
-    var profile = {
-        lives: 5,
-        points: 0,
-        avatar: null,
-        currentTema: null,
-        currentQuestion: null
-    };
-    */
-
     if (!profile) {
         profile = {
             lives: 5,
             points: 0,
             avatar: null,
             currentTema: null,
-            domandaCorrente: null
+            domandaCorrente: null,
+            decreaseLives: function () { this.lives--; },
+            addPoint: function () { this.points++; }
         }
     };
 
@@ -161,16 +144,16 @@ var domande = [
         linkApprofondimento: "",
         rispostaCorretta: "B",
         risposte: [
-            { id: "A", risposta: "Se l’esito mi aggrada non faccio nulla." },
+            { id: "A", risposta: "Se l'esito mi aggrada non faccio nulla." },
             { id: "B", risposta: "Mi rivolgo agli insegnanti." },
             { id: "C", risposta: "Lancio il cancellino contro i compagni eletti." },
-            { id: "D", risposta: "Cerco di capire chi è stato." }
+            { id: "D", risposta: "Cerco di capire chi \u00e8 stato." }
         ]
     },
     {
         id: 2,
         temaId: 1,
-        domanda: "All’interno della tua scuola trovi un muro crepato, che nessuno ha intenzione di riparare: come agisci?",
+        domanda: "All'interno della tua scuola trovi un muro crepato, che nessuno ha intenzione di riparare: come agisci?",
         img: "img/foto-2.jpg",
         linkApprofondimento: "",
         rispostaCorretta: "A",
@@ -184,21 +167,21 @@ var domande = [
     {
         id: 3,
         temaId: 1,
-        domanda: "Un ragazzo viene accusato e punito per un graffito sulla facciata della scuola. Tu però vieni a sapere che è stato un tuo amico: come ti comporti?",
+        domanda: "Un ragazzo viene accusato e punito per un graffito sulla facciata della scuola. Tu per\u00f2 vieni a sapere che \u00e8 stato un tuo amico: come ti comporti?",
         img: "img/foto-3.jpg",
         linkApprofondimento: "",
         rispostaCorretta: "C",
         risposte: [
-            { id: "A", risposta: "Apprezzo il graffito, perché mi piace l’arte illegale." },
+            { id: "A", risposta: "Apprezzo il graffito, perché mi piace l'arte illegale." },
             { id: "B", risposta: "Non faccio nulla, gli amici prima di tutto." },
             { id: "C", risposta: "Parlo con il mio amico per farlo confessare e poi con gli insegnanti." },
-            { id: "D", risposta: "Parlo direttamente con gli insegnati denunciando l’accaduto." }
+            { id: "D", risposta: "Parlo direttamente con gli insegnati denunciando l'accaduto." }
         ]
     },
     {
         id: 4,
         temaId: 1,
-        domanda: "Se vedi un tuo compagno di classe che usa violenza contro un ragazzino più piccolo, che cosa fai?",
+        domanda: "Se vedi un tuo compagno di classe che usa violenza contro un ragazzino pi\u00f9 piccolo, che cosa fai?",
         img: "img/foto-4.jpg",
         linkApprofondimento: "",
         rispostaCorretta: "B",
@@ -217,7 +200,7 @@ var domande = [
         linkApprofondimento: "http://scuola.regione.emilia-romagna.it/qualificazione-scolastica/educazione-alla-cittadinanza-attiva/sicurezza-e-legalita",
         rispostaCorretta: "C",
         risposte: [
-            { id: "A", risposta: "Ti disinteressi, non è tuo amico." },
+            { id: "A", risposta: "Ti disinteressi, non \u00e8 tuo amico." },
             { id: "B", risposta: "Fai girare anche tu quella foto." },
             { id: "C", risposta: "Segnali che si tratta di un reato." },
             { id: "D", risposta: "Ne salvi una copia sul telefono." }
@@ -234,8 +217,8 @@ var domande = [
         rispostaCorretta: "A",
         risposte: [
             { id: "A", risposta: "rischio una denuncia" },
-            { id: "B", risposta: "non mi succede nulla... tanto è solo una foto!" },
-            { id: "C", risposta: "è sufficiente non taggarla" },
+            { id: "B", risposta: "non mi succede nulla... tanto \u00e8 solo una foto!" },
+            { id: "C", risposta: "\u00e8 sufficiente non taggarla" },
             { id: "D", risposta: "le faccio passare l'arrabbiatura mostrandole i like ottenuti" }
         ]
     },
@@ -256,7 +239,7 @@ var domande = [
     {
         id: 8,
         temaId: 2,
-        domanda: "Qual è l’età minima per poter aprire un profilo sui principali social network?",
+        domanda: "Qual \u00e8 l'età minima per poter aprire un profilo sui principali social network?",
         img: "img/foto-8.jpg",
         linkApprofondimento: "C",
         rispostaCorretta: "",
@@ -289,10 +272,10 @@ var domande = [
         linkApprofondimento: "https://docs.google.com/viewer?a=v&pid=sites&srcid=ZGVmYXVsdGRvbWFpbnxhZ2VwaWFjZW56YTR8Z3g6MTUwYTQ3NTg0ZGFhMWYwMg",
         rispostaCorretta: "B",
         risposte: [
-            { id: "A", risposta: "È vero" },
+            { id: "A", risposta: "\u00e8 vero" },
             { id: "B", risposta: "Falso, sono perseguibile penalmente" },
             { id: "C", risposta: "Dipende da chi offendo" },
-            { id: "D", risposta: "Sono perseguibile solo mentre il contenuto è online" }
+            { id: "D", risposta: "Sono perseguibile solo mentre il contenuto \u00e8 online" }
         ]
     },
 
@@ -301,15 +284,15 @@ var domande = [
     {
         id: 11,
         temaId: 3,
-        domanda: "L'Isis è una mafia?",
+        domanda: "L'Isis \u00e8 una mafia?",
         img: "img/foto-11.jpg",
         linkApprofondimento: "http://www.sapere.it/sapere/strumenti/domande-risposte/storia-civilta/che-cosa-e-isis.html",
         rispostaCorretta: "A",
         risposte: [
             { id: "A", risposta: "No, perché a differenza della mafia usa pretesti di stampo religioso." },
-            { id: "B", risposta: "Sì, è una mafia perché protegge tutte le persone in cambio di denaro e benessere." },
-            { id: "C", risposta: "Sì, perché ha le stesse origini delle altre mafie." },
-            { id: "D", risposta: "Sì, perché diffonde terrore." }
+            { id: "B", risposta: "S\u00ec, \u00e8 una mafia perché protegge tutte le persone in cambio di denaro e benessere." },
+            { id: "C", risposta: "S\u00ec, perché ha le stesse origini delle altre mafie." },
+            { id: "D", risposta: "S\u00ec, perché diffonde terrore." }
         ]
     },
     {
@@ -322,22 +305,22 @@ var domande = [
         risposte: [
             { id: "A", risposta: "Perché hanno paura della polizia." },
             { id: "B", risposta: "Perché vorrebbero che la mafia continuasse a vivere." },
-            { id: "C", risposta: "Non è vero che non si ribellano, una parte di loro si ribella per rivendicare la propria libertà." },
+            { id: "C", risposta: "Non \u00e8 vero che non si ribellano, una parte di loro si ribella per rivendicare la propria libertà." },
             { id: "D", risposta: "Perché ci guadagnano." }
         ]
     },
     {
         id: 13,
         temaId: 3,
-        domanda: "Quali tra questi comportamenti può essere ritenuto mafioso?",
+        domanda: "Quali tra questi comportamenti pu\u00f2 essere ritenuto mafioso?",
         img: "img/foto-13.jpg",
         linkApprofondimento: "http://www.addiopizzo.org/",
         rispostaCorretta: "B",
         risposte: [
             { id: "A", risposta: "Rubare la ragazza o il ragazzo a qualcuno." },
-            { id: "B", risposta: "Prendere la merenda a un ragazzo più piccolo dopo averlo minacciato." },
+            { id: "B", risposta: "Prendere la merenda a un ragazzo pi\u00f9 piccolo dopo averlo minacciato." },
             { id: "C", risposta: "Fare la spia o denunciare un fatto grave." },
-            { id: "D", risposta: "Violare la privacy di un’altra persona." }
+            { id: "D", risposta: "Violare la privacy di un'altra persona." }
         ]
     },
     {
@@ -350,14 +333,14 @@ var domande = [
         risposte: [
             { id: "A", risposta: "A 11 anni." },
             { id: "B", risposta: "A 18 anni." },
-            { id: "C", risposta: "Non c'è un'età." },
+            { id: "C", risposta: "Non c'\u00e8 un'età." },
             { id: "D", risposta: "A 30 anni." }
         ]
     },
     {
         id: 15,
         temaId: 3,
-        domanda: "Come si può coinvolgere una persona nelle attività mafiose?",
+        domanda: "Come si pu\u00f2 coinvolgere una persona nelle attività mafiose?",
         img: "img/foto-15.jpg",
         linkApprofondimento: "http://www.regione.emilia-romagna.it/notizie/2016/ottobre/legalita-il-testo-unico-regionale-e-legge-lemilia-romagna-rafforza-la-lotta-alle-mafie-e-il-sostegno-alle-vittime",
         rispostaCorretta: "A",
@@ -365,7 +348,7 @@ var domande = [
             { id: "A", risposta: "Promettendo soldi facili in cambio di favori." },
             { id: "B", risposta: "Attraverso una campagna di adesione volontaria." },
             { id: "C", risposta: "Approfittando del suo malessere o della sua solitudine." },
-            { id: "D", risposta: "Si selezionano i più meritevoli e li si invita." }
+            { id: "D", risposta: "Si selezionano i pi\u00f9 meritevoli e li si invita." }
         ]
     },
 
@@ -374,21 +357,21 @@ var domande = [
     {
         id: 16,
         temaId: 4,
-        domanda: "Che cos'è il gioco d'azzardo?",
+        domanda: "Che cos'\u00e8 il gioco d'azzardo?",
         img: "img/foto-16.jpg",
         linkApprofondimento: "http://www.harmoniamentis.it/cont/ludopatia-e-gioco-patologico/3279/definizione-gioco-azzardo-patologico.asp",
         rispostaCorretta: "A",
         risposte: [
-            { id: "A", risposta: "Un’attività in cui rischi di perdere beni e denaro." },
+            { id: "A", risposta: "Un'attività in cui rischi di perdere beni e denaro." },
             { id: "B", risposta: "Un modo per guadagnare facilmente." },
             { id: "C", risposta: "Un gioco individuale contro la solitudine." },
-            { id: "D", risposta: "Un’attività che educa alla vita." }
+            { id: "D", risposta: "Un'attività che educa alla vita." }
         ]
     },
     {
         id: 17,
         temaId: 4,
-        domanda: "Quale impatto ha il gioco d’azzardo sulla famiglia?",
+        domanda: "Quale impatto ha il gioco d'azzardo sulla famiglia?",
         img: "img/foto-17.jpg",
         linkApprofondimento: "http://www.benessere.com/psicologia/arg00/dipendenza_gioco_azzardo.htm",
         rispostaCorretta: "A",
@@ -430,14 +413,14 @@ var domande = [
     {
         id: 20,
         temaId: 4,
-        domanda: "Quale di questi comportamenti è lecito per un minorenne?",
+        domanda: "Quale di questi comportamenti \u00e8 lecito per un minorenne?",
         img: "img/foto-20.jpg",
         linkApprofondimento: "http://www.andinrete.it/portale/index.php?page=40&sid=6aee58421ff639c556ae77e3077f73e3",
         rispostaCorretta: "A",
         risposte: [
-            { id: "A", risposta: "Informarsi sui rischi del gioco d’azzardo." },
+            { id: "A", risposta: "Informarsi sui rischi del gioco d'azzardo." },
             { id: "B", risposta: "Entrare nelle aree destinate a slot machine e lotterie." },
-            { id: "C", risposta: "Accedere a una sala scommesse o a un casinò." },
+            { id: "C", risposta: "Accedere a una sala scommesse o a un casin\u00f2." },
             { id: "D", risposta: "Partecipare a giochi con vincite in denaro." }
         ]
     },
@@ -446,71 +429,71 @@ var domande = [
     {
         id: 21,
         temaId: 5,
-        domanda: "È giusto che i genitori pubblichino cose private dei figli su internet? ",
+        domanda: "\u00e8 giusto che i genitori pubblichino cose private dei figli su internet? ",
         img: "img/foto-21.jpg",
         linkApprofondimento: "http://www.garanteprivacy.it/web/guest/home/docweb/-/docweb-display/docweb/4231738",
         rispostaCorretta: "D",
         risposte: [
             { id: "A", risposta: "No, raccolgono like senza meritarli." },
-            { id: "B", risposta: "Sì, al figlio fa sicuramente piacere." },
-            { id: "C", risposta: "Sì, ha la patria potestà e può decidere per il figlio." },
+            { id: "B", risposta: "S\u00ec, al figlio fa sicuramente piacere." },
+            { id: "C", risposta: "S\u00ec, ha la patria potestà e pu\u00f2 decidere per il figlio." },
             { id: "D", risposta: "No, violerebbe la privacy del minore." }
         ]
     },
     {
         id: 22,
         temaId: 5,
-        domanda: "Si può far lavorare un figlio prima che compia 15 anni?",
+        domanda: "Si pu\u00f2 far lavorare un figlio prima che compia 15 anni?",
         img: "img/foto-22.jpg",
         linkApprofondimento: "http://www.anfos.it/sicurezza/tutela-lavoro-minorile/",
         rispostaCorretta: "B",
         risposte: [
-            { id: "A", risposta: "Sì, per di piccoli lavoretti se il figlio non vuole studiare." },
-            { id: "B", risposta: "No, la normativa fissa a 15 anni l’età per accedere al mondo del lavoro." },
-            { id: "C", risposta: "Sì, ne ha la patria potestà e quindi sa che cosa è bene per lui." },
+            { id: "A", risposta: "S\u00ec, per di piccoli lavoretti se il figlio non vuole studiare." },
+            { id: "B", risposta: "No, la normativa fissa a 15 anni l'età per accedere al mondo del lavoro." },
+            { id: "C", risposta: "S\u00ec, ne ha la patria potestà e quindi sa che cosa \u00e8 bene per lui." },
             { id: "D", risposta: "No, non ha le caratteristiche per affrontare qualsiasi tipo di lavoro." }
         ]
     },
     {
         id: 23,
         temaId: 5,
-        domanda: "È giusto che i genitori impongano il proprio credo religioso e/o politico e/o alimentare (es: vegano) ai figli?",
+        domanda: "\u00e8 giusto che i genitori impongano il proprio credo religioso e/o politico e/o alimentare (es: vegano) ai figli?",
         img: "img/foto-23.jpg",
         linkApprofondimento: "",
         rispostaCorretta: "A",
         risposte: [
-            { id: "A", risposta: "No, ognuno è libero di fare le proprie scelte, senza compromettere la salute." },
-            { id: "B", risposta: "Sì, finché sono minorenni." },
-            { id: "C", risposta: "Sì, ogni famiglia deve rispettare le proprie tradizioni. " },
+            { id: "A", risposta: "No, ognuno \u00e8 libero di fare le proprie scelte, senza compromettere la salute." },
+            { id: "B", risposta: "S\u00ec, finché sono minorenni." },
+            { id: "C", risposta: "S\u00ec, ogni famiglia deve rispettare le proprie tradizioni. " },
             { id: "D", risposta: "No, la religione e la dieta sono regolate dalla legge." }
         ]
     },
     {
         id: 24,
         temaId: 5,
-        domanda: "È lecito costringere i propri figli minorenni a chiedere l'elemosina?",
+        domanda: "\u00e8 lecito costringere i propri figli minorenni a chiedere l'elemosina?",
         img: "img/foto-24.jpg",
         linkApprofondimento: "",
         rispostaCorretta: "B",
         risposte: [
-            { id: "A", risposta: "Sì, ma solo se sono molto bravi a raccogliere denaro." },
-            { id: "B", risposta: "No, si commette il reato di impiego di minori nell’accattonaggio." },
-            { id: "C", risposta: "Sì, quando i genitori sono in difficoltà economica." },
+            { id: "A", risposta: "S\u00ec, ma solo se sono molto bravi a raccogliere denaro." },
+            { id: "B", risposta: "No, si commette il reato di impiego di minori nell'accattonaggio." },
+            { id: "C", risposta: "S\u00ec, quando i genitori sono in difficoltà economica." },
             { id: "D", risposta: "No, ma i figli possono farlo di spontanea volontà." }
         ]
     },
     {
         id: 25,
         temaId: 5,
-        domanda: "È giusto che i genitori impongano ai propri bambini le loro decisioni su istruzione, lavoro e scelte di vita?",
+        domanda: "\u00e8 giusto che i genitori impongano ai propri bambini le loro decisioni su istruzione, lavoro e scelte di vita?",
         img: "img/foto-25.jpg",
         linkApprofondimento: "http://www.garanteinfanzia.org/diritti ",
         rispostaCorretta: "D",
         risposte: [
-            { id: "A", risposta: "No, ogni bambino è in grado di decidere per sé." },
-            { id: "B", risposta: "Sì, i genitori sono tenuti a dare consigli ai propri figli." },
-            { id: "C", risposta: "Sì, i genitori hanno il diritto di decidere al posto dei figli perché sono più saggi." },
-            { id: "D", risposta: "No, imporre la propria volontà sui figli senza tener conto dei loro bisogni è contro i diritti dell’infanzia." }
+            { id: "A", risposta: "No, ogni bambino \u00e8 in grado di decidere per sé." },
+            { id: "B", risposta: "S\u00ec, i genitori sono tenuti a dare consigli ai propri figli." },
+            { id: "C", risposta: "S\u00ec, i genitori hanno il diritto di decidere al posto dei figli perché sono pi\u00f9 saggi." },
+            { id: "D", risposta: "No, imporre la propria volontà sui figli senza tener conto dei loro bisogni \u00e8 contro i diritti dell'infanzia." }
         ]
     }
 ];
