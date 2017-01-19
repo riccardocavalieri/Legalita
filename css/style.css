@@ -1,4 +1,4 @@
-@charset "utf-8";
+﻿@charset "utf-8";
 /* CSS Document */
 
 body, html {
@@ -229,6 +229,7 @@ h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6 {
 }
 .lg-gioco-immagine img {
 	width: 240px;
+    height:145px;
 	border: 5px solid #f2395b;
 }
 .lg-gioco-corretta {

@@ -17,7 +17,8 @@
     <div class="lg-gioco-immagine" ng-class="{ nascondi: HaRisposto }"><img src="{{Profile.domandaCorrente.img}}" /></div>
     <div class="lg-gioco-corretta" ng-class="{ nascondi: (!HaRisposto || !HaRispostoCorrettamente)}">
         <img src="img/risposta-1.png" />
-        <audio src="sound/applause.mp3" type="audio/mpeg"></audio>
+        <audio id="soundRispostaCorretta" src="sound/applause.mp3" type="audio/mpeg"></audio>
+        <audio id="soundRispostaSbagliata" src="sound/fail-01.mp3" type="audio/mpeg"></audio>
     </div>
     <div class="lg-gioco-sbagliata" ng-class="{ nascondi: (!HaRisposto || HaRispostoCorrettamente)}"><img src="img/risposta-0.png" /></div>
     <div class="lg-gioco-risposte">

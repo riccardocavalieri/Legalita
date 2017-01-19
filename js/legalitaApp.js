@@ -116,11 +116,14 @@ app.controller('QuizController', ['$scope', 'UserProfileService',
             $scope.HaRisposto = true;
             $scope.Profile.domandePrecedenti.push($scope.Profile.domandaCorrente.id);
             $scope.HaRispostoCorrettamente = (risposta == $scope.Profile.domandaCorrente.rispostaCorretta);
+            
             if (!$scope.HaRispostoCorrettamente) {
                 $scope.Profile.decreaseLives();
+                document.getElementById('soundRispostaSbagliata').play();
             }
             else {
                 $scope.Profile.addPoint();
+                document.getElementById('soundRispostaCorretta').play();
             }
         };
 
@@ -130,10 +133,16 @@ app.controller('QuizController', ['$scope', 'UserProfileService',
                 $scope.ProssimaPagina = "fine";
                 return;
             }
+
+            if ($scope.Profile.prossimaDomanda && $scope.Profile.prossimaDomanda.temaId != $scope.Profile.currentTema.id) {
+                $scope.Profile.currentTema = temi[$scope.Profile.prossimaDomanda.temaId - 1];
+                $scope.ProssimaPagina = "temaIntro";
+                return;
+            }
             
             $scope.Profile.domandaCorrente = GetDomandaCorrente($scope.Profile);
             if ($scope.Profile.domandaCorrente || $scope.Profile.currentTema.id != $scope.Profile.domandaCorrente.temaId) {
-                $scope.Profile.currentTema = temi[$scope.Profile.domandaCorrente.temaId - 1];
+                
             }
             $scope.Profile.prossimaDomanda = GetProssimaDomanda($scope.Profile);
             $scope.HaRisposto = false;
@@ -318,8 +327,8 @@ var domande = [
         temaId: 2,
         domanda: "Qual \u00e8 l'et\u00e1 minima per poter aprire un profilo sui principali social network?",
         img: "img/foto-8.jpg",
-        linkApprofondimento: "C",
-        rispostaCorretta: "",
+        linkApprofondimento: "",
+        rispostaCorretta: "C",
         risposte: [
             { id: "A", risposta: "35/40 anni" },
             { id: "B", risposta: "8/10 anni" },
