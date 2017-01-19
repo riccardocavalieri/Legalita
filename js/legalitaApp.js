@@ -8,6 +8,7 @@ app.config(function ($routeProvider, $locationProvider) {
     .when("/avatar", { templateUrl: "views/avatar.html" })
     .when("/gioco", { templateUrl: "views/gioco.html" })
     .when("/fine", { templateUrl: "views/fine.html" })
+    .otherwise({ redirectTo: '/' })
     ;
 
     // use the HTML5 History API
